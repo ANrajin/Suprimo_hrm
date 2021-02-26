@@ -1,0 +1,82 @@
+<div class="login-page">
+  <div class="login-box">
+    <div class="login-logo">
+      <a href=""><b>SUPRIMO</b>HRM</a>
+    </div>
+    <!-- /.login-logo -->
+    <div class="card">
+      <div class="card-body login-card-body">
+        <p class="login-box-msg">Sign in to start your session</p>
+        <span
+          ><strong>Email:</strong> admin@email.com <br />
+          <strong>Password: </strong>123456</span
+        >
+        <form
+          ngNativeValidate
+          [formGroup]="loginForm"
+          (ngSubmit)="onSubmit()"
+          method="post"
+        >
+          <div class="row form-group">
+            <div class="input-group">
+              <input
+                type="email"
+                class="form-control"
+                placeholder="Email"
+                name="email"
+                formControlName="email"
+                [class.is-invalid]="email.invalid && email.touched"
+              />
+              <div class="input-group-append">
+                <div class="input-group-text">
+                  <span class="fas fa-envelope"></span>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="email.touched && email.invalid">
+              <small *ngIf="email.errors?.required" class="text-danger"
+                >Email is required</small
+              >
+              <small *ngIf="email.errors?.pattern" class="text-danger"
+                >Enter valid email address.<em> example@email.com</em></small
+              >
+            </div>
+          </div>
+
+          <div class="row form-group">
+            <div class="input-group">
+              <input
+                type="password"
+                class="form-control"
+                placeholder="Password"
+                name="password"
+                formControlName="password"
+                [class.is-invalid]="password.invalid && password.touched"
+              />
+              <div class="input-group-append">
+                <div class="input-group-text">
+                  <span class="fas fa-lock"></span>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="password.invalid && password.touched">
+              <small *ngIf="password.errors?.required" class="text-danger"
+                >Password is required</small
+              >
+            </div>
+          </div>
+          <div class="d-flex justify-content-center">
+            <button
+              type="submit"
+              class="btn btn-primary"
+              [disabled]="!loginForm.valid"
+            >
+              Sign In
+            </button>
+          </div>
+        </form>
+      </div>
+      <!-- /.login-card-body -->
+    </div>
+  </div>
+</div>

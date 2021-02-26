@@ -1,0 +1,478 @@
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1>Employees Management</h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a routerLink="/">Home</a></li>
+            <li class="breadcrumb-item active">Employees</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+    <!-- /.container-fluid -->
+  </section>
+
+  <!-- Main content -->
+  <section class="content">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="d-flex justify-content-between my-3">
+          <div class="btn-group">
+            <button
+              type="button"
+              class="btn btn-default text-primary"
+              data-toggle="modal"
+              data-target="#empAdd"
+            >
+              <i class="fa fa-plus-circle" aria-hidden="true"></i>
+            </button>
+            <button type="button" class="btn btn-default text-info">
+              <i class="fa fa-list" aria-hidden="true"></i>
+            </button>
+            <button type="button" class="btn btn-default text-danger">
+              <i class="fa fa-trash" aria-hidden="true"></i>
+            </button>
+          </div>
+          <div class="form-group">
+            <input type="text" class="form-control" />
+          </div>
+        </div>
+        <div class="card">
+          <!-- /.card-header -->
+          <div class="card-body">
+            <table #datatable class="table table-bordered table-striped">
+              <thead>
+                <tr>
+                  <th>
+                    <input type="checkbox" (change)="checkAll($event)" />
+                  </th>
+                  <th>#</th>
+                  <th>Action</th>
+                  <th>First Name</th>
+                  <th>Last Name</th>
+                  <th>Address</th>
+                  <th>DOB</th>
+                  <th>Department</th>
+                  <th>Position</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let employee of employees; let i = index">
+                  <td>
+                    <input type="checkbox" [checked]="checks" />
+                  </td>
+                  <td>{{ i + 1 }}</td>
+                  <td>
+                    <button class="btn btn-sm text-success" data-toggle="modal">
+                      <i class="fa fa-eye"></i>
+                    </button>
+                    <button
+                      class="btn btn-sm text-info"
+                      (click)="onEdit(employee)"
+                      data-toggle="modal"
+                      data-target="#empEdit"
+                    >
+                      <i class="fa fa-edit"></i>
+                    </button>
+                    <button
+                      (click)="onDelete(employee.id)"
+                      class="btn btn-sm text-danger"
+                    >
+                      <i class="fa fa-trash"></i>
+                    </button>
+                  </td>
+                  <td>{{ employee.first_name }}</td>
+                  <td>{{ employee.last_name }}</td>
+                  <td>{{ employee.address }}</td>
+                  <td>{{ employee.dob }}</td>
+                  <td>{{ employee.title }}</td>
+                  <td>{{ employee.post_title }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <!-- /.card-body -->
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- /.content -->
+</div>
+
+<!-- Add Employee -->
+<div
+  class="modal fade"
+  id="empAdd"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Add New Employee</h5>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="employeeForm" (ngSubmit)="onSubmit()">
+          <div class="form-group">
+            <label for="">User Name</label>
+            <select
+              formControlName="user_id"
+              class="form-control"
+              [class.is-invalid]="user_id.invalid && user_id.touched"
+            >
+              <option *ngFor="let user of users" value="{{ user.id }}">
+                {{ user.username }}
+              </option>
+            </select>
+            <div *ngIf="user_id.touched && user_id.invalid">
+              <small *ngIf="user_id.errors?.required" class="text-danger"
+                >Select User Name</small
+              >
+            </div>
+          </div>
+          <div class="row form-group">
+            <div class="col-md-6">
+              <label for="">First Name</label>
+              <input
+                type="text"
+                class="form-control"
+                formControlName="f_name"
+                [class.is-invalid]="f_name.invalid && f_name.touched"
+              />
+              <div *ngIf="f_name.touched && f_name.invalid">
+                <small *ngIf="f_name.errors?.required" class="text-danger"
+                  >First name is required</small
+                >
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label for="">Last Name</label>
+              <input
+                type="text"
+                class="form-control"
+                formControlName="l_name"
+                [class.is-invalid]="l_name.invalid && l_name.touched"
+              />
+              <div *ngIf="l_name.touched && l_name.invalid">
+                <small *ngIf="l_name.errors?.required" class="text-danger"
+                  >Last name is required</small
+                >
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="">Address</label>
+            <textarea
+              formControlName="address"
+              class="form-control"
+              [class.is-invalid]="address.invalid && address.touched"
+            ></textarea>
+            <div *ngIf="address.touched && address.invalid">
+              <small *ngIf="address.errors?.required" class="text-danger"
+                >Address is required</small
+              >
+            </div>
+          </div>
+          <div class="row form-group">
+            <div class="col-md-6">
+              <label for="">Date of Birth</label>
+              <input
+                type="date"
+                class="form-control"
+                formControlName="dob"
+                [class.is-invalid]="dob.invalid && dob.touched"
+              />
+              <div *ngIf="dob.touched && dob.invalid">
+                <small *ngIf="dob.errors?.required" class="text-danger"
+                  >Please Select Date of birth</small
+                >
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label for="">Joining Date</label>
+              <input
+                type="date"
+                class="form-control"
+                formControlName="joinDate"
+                [class.is-invalid]="joinDate.invalid && joinDate.touched"
+              />
+              <div *ngIf="joinDate.touched && joinDate.invalid">
+                <small *ngIf="joinDate.errors?.required" class="text-danger"
+                  >Please Select joining Date</small
+                >
+              </div>
+            </div>
+          </div>
+          <div class="row form-group">
+            <div class="col-md-4">
+              <label for="">Department</label>
+              <select
+                formControlName="department_id"
+                class="form-control"
+                [class.is-invalid]="
+                  department_id.invalid && department_id.touched
+                "
+              >
+                <option
+                  *ngFor="let department of departments"
+                  value="{{ department.id }}"
+                >
+                  {{ department.title }}
+                </option>
+              </select>
+              <div *ngIf="department_id.touched && department_id.invalid">
+                <small
+                  *ngIf="department_id.errors?.required"
+                  class="text-danger"
+                  >Select department</small
+                >
+              </div>
+            </div>
+            <div class="col-md-4">
+              <label for="">Position</label>
+              <select
+                formControlName="position_id"
+                class="form-control"
+                [class.is-invalid]="position_id.invalid && position_id.touched"
+              >
+                <option
+                  *ngFor="let position of positions"
+                  value="{{ position.id }}"
+                >
+                  {{ position.post_title }}
+                </option>
+              </select>
+              <div *ngIf="position_id.touched && position_id.invalid">
+                <small *ngIf="position_id.errors?.required" class="text-danger"
+                  >Select position</small
+                >
+              </div>
+            </div>
+            <div class="col-md-4">
+              <label for="">Status</label>
+              <select
+                formControlName="status"
+                class="form-control"
+                [class.is-invalid]="status.invalid && status.touched"
+              >
+                <option value="1">Active</option>
+                <option value="0">In Active</option>
+              </select>
+              <div *ngIf="status.touched && status.invalid">
+                <small *ngIf="status.errors?.required" class="text-danger"
+                  >Select employee status</small
+                >
+              </div>
+            </div>
+          </div>
+          <div class="d-flex justify-content-end">
+            <button type="submit" class="btn btn-sm btn-primary">
+              Add New
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- update employee -->
+<div
+  class="modal fade"
+  id="empEdit"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Update Employee</h5>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="employeeEdit" (ngSubmit)="onUpdate()">
+          <input type="hidden" class="form-control" formControlName="id" />
+          <div class="form-group">
+            <label for="">User Name</label>
+            <select
+              formControlName="user_id"
+              class="form-control"
+              [class.is-invalid]="user_id.invalid && user_id.touched"
+            >
+              <option *ngFor="let user of users" value="{{ user.id }}">
+                {{ user.username }}
+              </option>
+            </select>
+            <div *ngIf="user_id.touched && user_id.invalid">
+              <small *ngIf="user_id.errors?.required" class="text-danger"
+                >Select User Name</small
+              >
+            </div>
+          </div>
+          <div class="row form-group">
+            <div class="col-md-6">
+              <label for="">First Name</label>
+              <input
+                type="text"
+                class="form-control"
+                formControlName="f_name"
+                [class.is-invalid]="f_name.invalid && f_name.touched"
+              />
+              <div *ngIf="f_name.touched && f_name.invalid">
+                <small *ngIf="f_name.errors?.required" class="text-danger"
+                  >First name is required</small
+                >
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label for="">Last Name</label>
+              <input
+                type="text"
+                class="form-control"
+                formControlName="l_name"
+                [class.is-invalid]="l_name.invalid && l_name.touched"
+              />
+              <div *ngIf="l_name.touched && l_name.invalid">
+                <small *ngIf="l_name.errors?.required" class="text-danger"
+                  >Last name is required</small
+                >
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="">Address</label>
+            <textarea
+              formControlName="address"
+              class="form-control"
+              [class.is-invalid]="address.invalid && address.touched"
+            ></textarea>
+            <div *ngIf="address.touched && address.invalid">
+              <small *ngIf="address.errors?.required" class="text-danger"
+                >Address is required</small
+              >
+            </div>
+          </div>
+          <div class="row form-group">
+            <div class="col-md-6">
+              <label for="">Date of Birth</label>
+              <input
+                type="date"
+                class="form-control"
+                formControlName="dob"
+                [class.is-invalid]="dob.invalid && dob.touched"
+              />
+              <div *ngIf="dob.touched && dob.invalid">
+                <small *ngIf="dob.errors?.required" class="text-danger"
+                  >Please Select Date of birth</small
+                >
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label for="">Joining Date</label>
+              <input
+                type="date"
+                class="form-control"
+                formControlName="joinDate"
+                [class.is-invalid]="joinDate.invalid && joinDate.touched"
+              />
+              <div *ngIf="joinDate.touched && joinDate.invalid">
+                <small *ngIf="joinDate.errors?.required" class="text-danger"
+                  >Please Select joining Date</small
+                >
+              </div>
+            </div>
+          </div>
+          <div class="row form-group">
+            <div class="col-md-4">
+              <label for="">Department</label>
+              <select
+                formControlName="department_id"
+                class="form-control"
+                [class.is-invalid]="
+                  department_id.invalid && department_id.touched
+                "
+              >
+                <option
+                  *ngFor="let department of departments"
+                  value="{{ department.id }}"
+                >
+                  {{ department.title }}
+                </option>
+              </select>
+              <div *ngIf="department_id.touched && department_id.invalid">
+                <small
+                  *ngIf="department_id.errors?.required"
+                  class="text-danger"
+                  >Select department</small
+                >
+              </div>
+            </div>
+            <div class="col-md-4">
+              <label for="">Position</label>
+              <select
+                formControlName="position_id"
+                class="form-control"
+                [class.is-invalid]="position_id.invalid && position_id.touched"
+              >
+                <option
+                  *ngFor="let position of positions"
+                  value="{{ position.id }}"
+                >
+                  {{ position.post_title }}
+                </option>
+              </select>
+              <div *ngIf="position_id.touched && position_id.invalid">
+                <small *ngIf="position_id.errors?.required" class="text-danger"
+                  >Select position</small
+                >
+              </div>
+            </div>
+            <div class="col-md-4">
+              <label for="">Status</label>
+              <select
+                formControlName="status"
+                class="form-control"
+                [class.is-invalid]="status.invalid && status.touched"
+              >
+                <option value="1">Active</option>
+                <option value="0">In Active</option>
+              </select>
+              <div *ngIf="status.touched && status.invalid">
+                <small *ngIf="status.errors?.required" class="text-danger"
+                  >Select employee status</small
+                >
+              </div>
+            </div>
+          </div>
+          <div class="d-flex justify-content-end">
+            <button type="submit" class="btn btn-sm btn-primary">Update</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
